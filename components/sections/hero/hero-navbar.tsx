@@ -53,7 +53,7 @@ export default function HeroNavbar({
                         <a style={navLink} href="#mejora">
                             Home
                         </a>
-                        <a style={navLink} href="#servicios">
+                        <a style={navLink} href="#process">
                             About
                         </a>
                         <a style={navLink} href="#automatizacion">
