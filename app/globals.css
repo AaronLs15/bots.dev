@@ -119,11 +119,9 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    font-size: 80%;
   }
   * {
     @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
