@@ -140,7 +140,7 @@ export default function ServicesSection() {
                         Solutions That Take Your Business to the Next Level
                     </h2>
                     <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
-                        We design, develop, and implement automation tools that help you work
+                        We design, develop, and implement tools that help you work
                         smarter, move faster, and keep teams aligned from the front desk to the
                         boardroom.
                     </p>
