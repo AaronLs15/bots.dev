@@ -83,8 +83,8 @@ const navBar: CSSProperties = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 24,
-    padding: "22px 7vw 18px",
+    gap: 20,
+    padding: "18px 6vw 14px",
     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
     background:
         "linear-gradient(180deg, rgba(12, 18, 24, 0.72) 0%, rgba(8, 12, 16, 0.35) 100%)",
@@ -98,15 +98,15 @@ const navBar: CSSProperties = {
 const brand: CSSProperties = {
     display: "flex",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
     fontWeight: 600,
     letterSpacing: "0.02em",
 }
 
 const brandBadge: CSSProperties = {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 6,
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -123,20 +123,20 @@ const logoImage: CSSProperties = {
 }
 
 const brandText: CSSProperties = {
-    fontSize: 18,
+    fontSize: 14,
 }
 
 const navRight: CSSProperties = {
     display: "flex",
     alignItems: "center",
-    gap: 18,
+    gap: 14,
 }
 
 const navLinks: CSSProperties = {
     display: "flex",
     alignItems: "center",
-    gap: 18,
-    fontSize: 16,
+    gap: 14,
+    fontSize: 13,
     textTransform: "capitalize",
 }
 
@@ -149,11 +149,11 @@ const ctaButton: CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "12px 20px",
-    borderRadius: 10,
+    padding: "10px 16px",
+    borderRadius: 8,
     background: "rgba(126, 209, 242, 0.9)",
     color: "#031018",
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: 600,
     textDecoration: "none",
     boxShadow: "0 10px 24px rgba(80, 170, 210, 0.35)",

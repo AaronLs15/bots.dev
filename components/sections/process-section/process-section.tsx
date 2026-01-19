@@ -9,7 +9,7 @@ const processSteps = [
         step: "Step 1",
         title: "Smart Analyzing",
         description:
-            "We assess your workflows, map dependencies, and identify AI opportunities to remove friction.",
+            "We assess your workflows, map dependencies, and identify opportunities to remove friction.",
         demo: "analysis",
     },
     {

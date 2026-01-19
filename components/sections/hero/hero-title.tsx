@@ -255,47 +255,46 @@ export default function HeroTitle({
         <p style={subtitleText} data-subtitle>
           {subtitle}
         </p>
-      </div>
-      <div style={buttonswrap} data-hero-buttons>
-        <RippleButton
-          size="lg"
-          variant="default"
-          hoverScale={1}
-          tapScale={0.98}
-          className={heroButtonClass}
-        >
-          Get in touch
-          <PhoneCallIcon size={18} weight="bold" aria-hidden="true" />
-          <RippleButtonRipples />
-        </RippleButton>
-        <RippleButton
-          size="lg"
-          variant="default"
-          hoverScale={1}
-          tapScale={0.98}
-          className={heroButtonClassSecondary}
-        >
-          Services
-          <RippleButtonRipples />
-        </RippleButton>
+        <div style={buttonswrap} data-hero-buttons>
+          <RippleButton
+            size="lg"
+            variant="default"
+            hoverScale={1}
+            tapScale={0.98}
+            className={heroButtonClass}
+          >
+            Get in touch
+            <PhoneCallIcon size={16} weight="bold" aria-hidden="true" />
+            <RippleButtonRipples />
+          </RippleButton>
+          <RippleButton
+            size="lg"
+            variant="default"
+            hoverScale={1}
+            tapScale={0.98}
+            className={heroButtonClassSecondary}
+          >
+            Services
+            <RippleButtonRipples />
+          </RippleButton>
+        </div>
       </div>
     </div>
   );
 }
 
 const buttonswrap: CSSProperties = {
-  position: "absolute",
   display: "flex",
-  zIndex: 2,
-  bottom: "29%",
-  gap: "50px",
+  gap: 28,
+  flexWrap: "wrap",
+  justifyContent: "center",
 };
 
 const heroButtonClass =
-  "h-14 px-9 text-base font-semibold rounded-lg gap-2 bg-[#85cfec] text-[#031018] touch-manipulation shadow-[0_12px_30px_rgba(133,207,236,0.35)] [--ripple-button-ripple-color:#031018]";
+  "h-11 px-7 text-sm font-semibold rounded-lg gap-2 bg-[#85cfec] text-[#031018] touch-manipulation shadow-[0_10px_24px_rgba(133,207,236,0.35)] [--ripple-button-ripple-color:#031018]";
 
 const heroButtonClassSecondary =
-  "h-14 px-9 text-base font-semibold rounded-lg bg-[#ffffff] text-[#031018] touch-manipulation shadow-[0_12px_30px_rgba(255,255,255,0.35)] [--ripple-button-ripple-color:#031018] hover:bg-[#e0e0e0]";
+  "h-11 px-7 text-sm font-semibold rounded-lg bg-[#ffffff] text-[#031018] touch-manipulation shadow-[0_10px_24px_rgba(255,255,255,0.35)] [--ripple-button-ripple-color:#031018] hover:bg-[#e0e0e0]";
 
 const titleWrap: CSSProperties = {
   position: "absolute",
@@ -311,18 +310,18 @@ const titleStack: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: 18,
+  gap: 14,
   textAlign: "center",
   padding: "0 8vw",
-  maxWidth: 960,
+  maxWidth: 800,
 };
 
 const titleText: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: 8,
-  fontSize: "clamp(28px, 4vw, 52px)",
+  gap: 6,
+  fontSize: "clamp(22px, 3.2vw, 42px)",
   fontWeight: 600,
   letterSpacing: "0.04em",
   color: "rgba(220, 244, 255, 0.9)",
@@ -343,10 +342,10 @@ const charStyle: CSSProperties = {
 
 const subtitleText: CSSProperties = {
   margin: 0,
-  fontSize: "clamp(14px, 1.3vw, 20px)",
+  fontSize: "clamp(11px, 1.05vw, 16px)",
   lineHeight: 1.6,
   color: "rgba(220, 244, 255, 0.7)",
-  maxWidth: 800,
+  maxWidth: 640,
 };
 
 const badgeWrap: CSSProperties = {
@@ -354,7 +353,7 @@ const badgeWrap: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  minHeight: 36,
+  minHeight: 29,
 };
 
 const badgeExpanded: CSSProperties = {
@@ -362,7 +361,7 @@ const badgeExpanded: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "flex-start", // importante para que el chip "termine" a la izquierda
-  padding: "6px 18px",
+  padding: "5px 14px",
   borderRadius: 999,
   background: "rgba(10, 16, 20, 0.7)",
   border: "1px solid rgba(255, 255, 255, 0.08)",
@@ -375,20 +374,20 @@ const badgeExpanded: CSSProperties = {
 const badgeContent: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
-  gap: 12,
+  gap: 10,
   whiteSpace: "nowrap",
-  fontSize: 15,
+  fontSize: 12,
   color: "rgba(220, 244, 255, 0.9)",
   letterSpacing: "0.01em",
 };
 
 const badgeChip: CSSProperties = {
-  padding: "6px 16px",
+  padding: "5px 12px",
   borderRadius: 999,
   background: "#85cfec",
   color: "#ffffff",
   fontWeight: 600,
-  fontSize: 14,
+  fontSize: 11,
   boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.2)",
 };
 
