@@ -35,16 +35,24 @@ export default function HeroTitle({
   const lineSignature = useMemo(() => resolvedLines.join("|"), [resolvedLines]);
   const subtitleSignature = useMemo(() => resolvedSubtitle, [resolvedSubtitle]);
 
-  useEffect(() => {
-    if (!titleRef.current) {
-      return;
-    }
+    useEffect(() => {
+        if (!titleRef.current) {
+            return;
+        }
 
-    const ctx = gsap.context(() => {
-      const timeline = gsap.timeline({ delay });
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+        const isMobile =
+            typeof window !== "undefined" &&
+            window.matchMedia("(max-width: 768px)").matches;
+        const prefersReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        if (prefersReducedMotion || isMobile) {
+            return;
+        }
+
+        const ctx = gsap.context(() => {
+            const timeline = gsap.timeline({ delay });
       const titleDuration = 0.7;
       const titleStagger = 0.03;
       const lineDurations = resolvedLines.map((line) =>

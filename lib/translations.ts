@@ -423,6 +423,13 @@ export const translations = {
                 },
             ],
         },
+        landing: {
+            results: {
+                eyebrow: "Resultados",
+                title: "Resultados medibles desde el dia uno",
+                body: "Destaca metricas, casos de uso y el impacto real en el crecimiento.",
+            },
+        },
         footer: {
             caption: "Sistemas automatizados que mantienen tu negocio en movimiento.",
             links: {

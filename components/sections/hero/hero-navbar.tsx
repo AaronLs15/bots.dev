@@ -1,6 +1,6 @@
 "use client"
 
-import { CSSProperties, useEffect, useRef } from "react"
+import { CSSProperties, useEffect, useRef, useState } from "react"
 import gsap from "gsap"
 import { useLanguage } from "@/components/providers/language-provider"
 
@@ -18,9 +18,37 @@ export default function HeroNavbar({
     const navRef = useRef<HTMLDivElement | null>(null)
     const { language, toggleLanguage, copy } = useLanguage()
     const isSpanish = language === "es"
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        const mediaQuery = window.matchMedia("(max-width: 768px)")
+        const updateMatch = () => setIsMobile(mediaQuery.matches)
+        updateMatch()
+
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener("change", updateMatch)
+            return () => mediaQuery.removeEventListener("change", updateMatch)
+        }
+
+        mediaQuery.addListener(updateMatch)
+        return () => mediaQuery.removeListener(updateMatch)
+    }, [])
 
     useEffect(() => {
         if (!navRef.current) {
+            return
+        }
+
+        const prefersReducedMotion =
+            typeof window !== "undefined" &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+        if (prefersReducedMotion || isMobile) {
+            gsap.set(navRef.current, { opacity: 1, y: 0, filter: "blur(0px)" })
             return
         }
 
@@ -40,19 +68,21 @@ export default function HeroNavbar({
         }, navRef)
 
         return () => ctx.revert()
-    }, [delay])
+    }, [delay, isMobile])
 
     return (
         <div style={navWrap}>
-            <div ref={navRef} style={navBar}>
-                <div style={brand}>
+            <div ref={navRef} style={isMobile ? { ...navBar, ...navBarMobile } : navBar}>
+                <div style={isMobile ? { ...brand, ...brandMobile } : brand}>
                     <span style={brandBadge}>
                         <img src={logoSrc} alt={logoAlt} style={logoImage} />
                     </span>
-                    <span style={brandText}>bots.dev</span>
+                    <span style={isMobile ? { ...brandText, ...brandTextMobile } : brandText}>
+                        bots.dev
+                    </span>
                 </div>
-                <div style={navRight}>
-                    <nav style={navLinks}>
+                <div style={isMobile ? { ...navRight, ...navRightMobile } : navRight}>
+                    <nav style={isMobile ? { ...navLinks, ...navLinksMobile } : navLinks}>
                         <a style={navLink} href="#mejora">
                             {copy.navbar.links.services}
                         </a>
@@ -66,18 +96,15 @@ export default function HeroNavbar({
                             {copy.navbar.links.results}
                         </a>
                     </nav>
-                    
-                    <a style={ctaButton} href="#mejora">
-                        {copy.navbar.cta}
-                    </a>
-                    <div style={langControl}>
+                    <div style={isMobile ? { ...langControl, ...langControlMobile } : langControl}>
+                        
                         <button
                             type="button"
                             aria-label={isSpanish ? copy.navbar.toEnglish : copy.navbar.toSpanish}
                             role="switch"
                             aria-checked={isSpanish}
                             onClick={toggleLanguage}
-                            style={langSwitch}
+                            style={isMobile ? { ...langSwitch, ...langSwitchMobile } : langSwitch}
                         >
                             <span style={langTrack} />
                             <span style={{ ...langOption, left: 10, color: isSpanish ? "rgba(220, 244, 255, 0.45)" : "rgba(220, 244, 255, 0.9)" }}>
@@ -89,11 +116,21 @@ export default function HeroNavbar({
                             <span
                                 style={{
                                     ...langThumb,
-                                    transform: isSpanish ? "translateX(42px)" : "translateX(0)",
+                                    transform: isSpanish
+                                        ? isMobile
+                                            ? "translateX(38px)"
+                                            : "translateX(42px)"
+                                        : "translateX(0)",
                                 }}
                             />
                         </button>
                     </div>
+                    <a
+                        style={isMobile ? { ...ctaButton, ...ctaButtonMobile } : ctaButton}
+                        href="#mejora"
+                    >
+                        {copy.navbar.cta}
+                    </a>
                 </div>
             </div>
         </div>
@@ -121,6 +158,13 @@ const navBar: CSSProperties = {
     boxShadow: "0 18px 40px rgba(0, 0, 0, 0.35)",
     color: "rgba(220, 244, 255, 0.92)",
     pointerEvents: "auto",
+}
+
+const navBarMobile: CSSProperties = {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 12,
+    padding: "14px 6vw 12px",
 }
 
 const brand: CSSProperties = {
@@ -154,10 +198,25 @@ const brandText: CSSProperties = {
     fontSize: 14,
 }
 
+const brandMobile: CSSProperties = {
+    justifyContent: "center",
+}
+
+const brandTextMobile: CSSProperties = {
+    fontSize: 13,
+}
+
 const navRight: CSSProperties = {
     display: "flex",
     alignItems: "center",
     gap: 12,
+}
+
+const navRightMobile: CSSProperties = {
+    width: "100%",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    gap: 10,
 }
 
 const navLinks: CSSProperties = {
@@ -166,6 +225,10 @@ const navLinks: CSSProperties = {
     gap: 14,
     fontSize: 13,
     textTransform: "capitalize",
+}
+
+const navLinksMobile: CSSProperties = {
+    display: "none",
 }
 
 const navLink: CSSProperties = {
@@ -179,12 +242,21 @@ const langControl: CSSProperties = {
     gap: 8,
 }
 
+const langControlMobile: CSSProperties = {
+    flexDirection: "column",
+    gap: 6,
+}
+
 const langText: CSSProperties = {
     fontSize: 11,
     letterSpacing: "0.08em",
     textTransform: "uppercase",
     color: "rgba(220, 244, 255, 0.6)",
     fontWeight: 600,
+}
+
+const langTextMobile: CSSProperties = {
+    fontSize: 10,
 }
 
 const langSwitch: CSSProperties = {
@@ -200,6 +272,11 @@ const langSwitch: CSSProperties = {
     boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.04)",
     cursor: "pointer",
     padding: 0,
+}
+
+const langSwitchMobile: CSSProperties = {
+    width: 68,
+    height: 28,
 }
 
 const langTrack: CSSProperties = {
@@ -243,4 +320,9 @@ const ctaButton: CSSProperties = {
     fontWeight: 600,
     textDecoration: "none",
     boxShadow: "0 10px 24px rgba(80, 170, 210, 0.35)",
+}
+
+const ctaButtonMobile: CSSProperties = {
+    padding: "9px 14px",
+    fontSize: 11,
 }
