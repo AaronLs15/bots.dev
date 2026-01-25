@@ -3,70 +3,16 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLanguage } from "@/components/providers/language-provider";
 
-const tasks = [
-    { title: "Payment reminder", meta: "Sent to selected clients", tone: "accent" },
-    { title: "Payroll management", meta: "Due on 2nd July", tone: "accent" },
-    { title: "Employee tracking", meta: "2 days ago", tone: "muted" },
-    { title: "Social media post", meta: "Canceled by user", tone: "muted" },
-];
-
-const services = [
-    {
-        label: "ERP",
-        title: "Enterprise Resource Planning",
-        description:
-            "Unify your inventory, finance, and operations in one system with dashboards that stay in sync.",
-        detail:
-            "Replace spreadsheet chaos with clean approvals, forecasting, and visibility across teams.",
-    },
-    {
-        label: "CRM",
-        title: "Customer Relationship Management",
-        description:
-            "Track every lead, deal, and interaction in one timeline so your team never loses context.",
-        detail:
-            "Automate follow-ups, reminders, and notes to keep pipeline momentum moving.",
-    },
-    {
-        label: "POS",
-        title: "Point of Sale",
-        description:
-            "Modern checkout experiences that keep inventory, sales, and customer data aligned in real time.",
-        detail:
-            "Support multi-location reporting and reconciliation without manual overhead.",
-    },
-    {
-        label: "E-Commerce",
-        title: "E-Commerce Platforms",
-        description:
-            "Conversion-focused storefronts with personalized catalogs, smart merchandising, and automation.",
-        detail:
-            "Integrate payments, shipping, and marketing flows so your store runs end to end.",
-    },
-    {
-        label: "Web Design",
-        title: "Web Design & UX",
-        description:
-            "Premium web experiences that balance storytelling with performance and technical clarity.",
-        detail:
-            "Launch faster sites with UX strategy, SEO-ready structure, and clean visuals.",
-    },
-    {
-        label: "Consulting",
-        title: "Process & Technology Consulting",
-        description:
-            "Map workflows, identify bottlenecks, and design automation roadmaps aligned with business goals.",
-        detail:
-            "Translate strategy into systems, timelines, and measurable outcomes your teams can execute.",
-    },
-];
-
-const automationTags = ["ERP", "CRM", "POS"];
-const growthTags = ["E-Commerce", "Web Design"];
 
 export default function ServicesSection() {
     const sectionRef = useRef<HTMLDivElement | null>(null);
+    const { copy } = useLanguage();
+    const servicesCopy = copy.services;
+    const tasks = servicesCopy.blockOne.tasks;
+    const automationTags = servicesCopy.blockOne.tags;
+    const growthTags = servicesCopy.blockTwo.tags;
 
     useEffect(() => {
         if (!sectionRef.current) return;
@@ -131,40 +77,38 @@ export default function ServicesSection() {
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-24">
                 <div data-animate="block" className=" text-center ">
                     <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                        Our Services
+                        {servicesCopy.introBadge}
                     </span>
                     <h2
                         className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl"
                         style={{ textWrap: "balance" }}
                     >
-                        Solutions That Take Your Business to the Next Level
+                        {servicesCopy.introTitle}
                     </h2>
                     <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
-                        We design, develop, and implement tools that help you work
-                        smarter, move faster, and keep teams aligned from the front desk to the
-                        boardroom.
+                        {servicesCopy.introBody}
                     </p>
                 </div>
 
                 <div className="grid items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">
                     <div data-animate="block" className="text-center lg:text-left">
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                            AI Assistant
+                            {servicesCopy.blockOne.badge}
                         </span>
                         <h3
                             className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl"
                             style={{ textWrap: "balance" }}
                         >
-                            Delegate Daily Tasks
+                            {servicesCopy.blockOne.title}
                         </h3>
-                        <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
-                            Move calendar management, reporting, and routine approvals into AI
-                            workflows that keep your teams moving without bottlenecks.
-                        </p>
-                        <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
-                            Keep operations consistent across locations while your team focuses on
-                            higher-impact decisions.
-                        </p>
+                        {servicesCopy.blockOne.paragraphs.map((paragraph) => (
+                            <p
+                                key={paragraph}
+                                className="mt-4 text-base leading-relaxed text-white/70 md:text-lg"
+                            >
+                                {paragraph}
+                            </p>
+                        ))}
                         <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
                             {automationTags.map((tag) => (
                                 <span
@@ -185,12 +129,14 @@ export default function ServicesSection() {
                         <div className="relative rounded-[28px] border border-white/10 bg-white/4 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
                             <div className="rounded-4xl border border-white/10 bg-black/40 p-5">
                                 <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
-                                    <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
-                                        All Tasks
-                                    </span>
-                                    <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
-                                        Waiting for approval
-                                    </span>
+                                    {servicesCopy.blockOne.filters.map((filter) => (
+                                        <span
+                                            key={filter}
+                                            className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1"
+                                        >
+                                            {filter}
+                                        </span>
+                                    ))}
                                 </div>
                                 <ul className="mt-5 space-y-3">
                                     {tasks.map((task) => (
@@ -237,7 +183,7 @@ export default function ServicesSection() {
                         <div className="relative rounded-[28px] border border-white/10 bg-white/4 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
                             <div className="rounded-4xl border border-white/10 bg-black/40 p-5">
                                 <div className="flex items-center justify-between text-sm text-white/60">
-                                    <span>Generate</span>
+                                    <span>{servicesCopy.blockTwo.demo.title}</span>
                                     <span
                                         aria-hidden="true"
                                         className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80"
@@ -246,18 +192,17 @@ export default function ServicesSection() {
                                     </span>
                                 </div>
                                 <div className="mt-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
-                                    Add document
+                                    {servicesCopy.blockTwo.demo.input}
                                 </div>
                                 <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/50">
-                                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                                        Analyze
-                                    </span>
-                                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                                        Generate Image
-                                    </span>
-                                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                                        Research
-                                    </span>
+                                    {servicesCopy.blockTwo.demo.actions.map((action) => (
+                                        <span
+                                            key={action}
+                                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1"
+                                        >
+                                            {action}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -265,22 +210,22 @@ export default function ServicesSection() {
 
                     <div data-animate="block" className="text-center lg:text-left">
                         <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                            Sales & Marketing
+                            {servicesCopy.blockTwo.badge}
                         </span>
                         <h3
                             className="mt-6 text-3xl font-semibold text-white md:text-4xl"
                             style={{ textWrap: "balance" }}
                         >
-                            Expedite Sales Growth
+                            {servicesCopy.blockTwo.title}
                         </h3>
-                        <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
-                            Support outreach, nourishment, and customer engagement with automation
-                            that feels human and consistent across every channel.
-                        </p>
-                        <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg">
-                            Turn attention into revenue with tailored journeys, analytics, and
-                            content that scales with demand.
-                        </p>
+                        {servicesCopy.blockTwo.paragraphs.map((paragraph) => (
+                            <p
+                                key={paragraph}
+                                className="mt-4 text-base leading-relaxed text-white/70 md:text-lg"
+                            >
+                                {paragraph}
+                            </p>
+                        ))}
                         <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
                             {growthTags.map((tag) => (
                                 <span
@@ -296,7 +241,7 @@ export default function ServicesSection() {
 
                 <div data-animate="block" className="border-t border-white/10 pt-12">
                     <div className="grid gap-12 md:grid-cols-2">
-                        {services.map((service) => (
+                        {servicesCopy.services.map((service) => (
                             <div
                                 key={service.label}
                                 data-animate="item"

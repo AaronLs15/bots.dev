@@ -3,51 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-const processSteps = [
-    {
-        step: "Step 1",
-        title: "Smart Analyzing",
-        description:
-            "We assess your workflows, map dependencies, and identify opportunities to remove friction.",
-        demo: "analysis",
-    },
-    {
-        step: "Step 2",
-        title: "Development",
-        description:
-            "We design systems and build reliable pipelines tailored to your operations.",
-        demo: "development",
-    },
-    {
-        step: "Step 3",
-        title: "Seamless Integration",
-        description:
-            "We integrate out solution to your stack without disruption, so teams can adopt quickly.",
-        demo: "integration",
-    },
-    {
-        step: "Step 4",
-        title: "Continuous Optimization",
-        description:
-            "We monitor performance, improve outputs, and keep workflows evolving with your goals.",
-        demo: "optimization",
-    },
-];
-
-const analysisChecks = [
-    "System check",
-    "Process check",
-    "Speed check",
-    "Manual work",
-    "Repetitive task",
-];
-
-const optimizationItems = [
-    { label: "Chatbot system", detail: "Efficiency up by 20%" },
-    { label: "Workflow system", detail: "Update available" },
-    { label: "Sales system", detail: "Up to date" },
-];
+import { useLanguage } from "@/components/providers/language-provider";
 
 const typingConfig = {
     charDelay: 0.035,
@@ -55,6 +11,8 @@ const typingConfig = {
     linePause: 0.2,
     indentPx: 12,
 };
+
+const stepDemos = ["analysis", "development", "integration", "optimization"] as const;
 
 const codeLines = [
     {
@@ -140,6 +98,14 @@ const ProcessSectionStyles = () => (
 
 export default function ProcessSection() {
     const sectionRef = useRef<HTMLDivElement | null>(null);
+    const { copy } = useLanguage();
+    const processCopy = copy.process;
+    const processSteps = processCopy.steps.map((step, index) => ({
+        ...step,
+        demo: stepDemos[index] ?? "analysis",
+    }));
+    const analysisChecks = processCopy.analysisChecks;
+    const optimizationItems = processCopy.optimizationItems;
 
     useEffect(() => {
         if (!sectionRef.current) return;
@@ -218,18 +184,17 @@ export default function ProcessSection() {
                     className="mx-auto flex max-w-3xl flex-col items-center text-center"
                 >
                     <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                        Our Process
+                        {processCopy.badge}
                     </span>
                     <h2
                         id="process-title"
                         className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl"
                         style={{ textWrap: "balance" }}
                     >
-                        Our Simple, Smart, and Scalable Process
+                        {processCopy.title}
                     </h2>
                     <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
-                        We design, develop, and implement automation tools that help you work
-                        smarter, not harder.
+                        {processCopy.subtitle}
                     </p>
                 </div>
 
@@ -286,7 +251,7 @@ export default function ProcessSection() {
                                         <div className="flex items-center justify-between text-xs text-white/50">
                                             <span>bots.dev</span>
                                             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
-                                                AI Core
+                                                {processCopy.devBadge}
                                             </span>
                                         </div>
                                         <div
@@ -318,7 +283,10 @@ export default function ProcessSection() {
                                                 </div>
                                             ))}
                                             <div className="mt-2 text-white/40">
-                                                status: <span className="text-white/70">optimized</span>
+                                                {processCopy.statusLabel}:{" "}
+                                                <span className="text-white/70">
+                                                    {processCopy.statusValue}
+                                                </span>
                                                 <span
                                                     aria-hidden="true"
                                                     className="code-caret ml-1 inline-block h-[14px] w-[2px] translate-y-[2px] rounded-full bg-[#85cfec]/70"
@@ -345,7 +313,7 @@ export default function ProcessSection() {
                                             </div>
                                         </div>
                                         <p className="text-xs text-white/50">
-                                            Secure API connections with minimal disruption.
+                                            {processCopy.integrationNote}
                                         </p>
                                     </div>
                                 ) : null}

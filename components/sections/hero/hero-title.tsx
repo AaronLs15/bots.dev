@@ -7,12 +7,13 @@ import {
   RippleButton,
   RippleButtonRipples,
 } from "@/components/animate-ui/components/buttons/ripple";
+import { useLanguage } from "@/components/providers/language-provider";
 
-const defaultLines = ["Modern Software Solutions", "That Scale Your Business"];
-const defaultSubtitle =
+const fallbackLines = ["Modern Software Solutions", "That Scale Your Business"];
+const fallbackSubtitle =
   "ERP, CRM, POS, e-commerce, Web Design, AI and custom software tailored to modern businesses.";
-const badgeLabel = "New";
-const badgeText = "Automated Lead Generation";
+const fallbackBadgeLabel = "New";
+const fallbackBadgeText = "Automated Lead Generation";
 
 type HeroTitleProps = {
   lines?: string[];
@@ -21,27 +22,40 @@ type HeroTitleProps = {
 };
 
 export default function HeroTitle({
-  lines = defaultLines,
-  subtitle = defaultSubtitle,
+  lines,
+  subtitle,
   delay = 1,
 }: HeroTitleProps) {
   const titleRef = useRef<HTMLDivElement | null>(null);
-  const lineSignature = useMemo(() => lines.join("|"), [lines]);
-  const subtitleSignature = useMemo(() => subtitle, [subtitle]);
+  const { copy } = useLanguage();
+  const resolvedLines = lines ?? copy.hero.titleLines ?? fallbackLines;
+  const resolvedSubtitle = subtitle ?? copy.hero.subtitle ?? fallbackSubtitle;
+  const badgeLabelText = copy.hero.badgeLabel ?? fallbackBadgeLabel;
+  const badgeTextLabel = copy.hero.badgeText ?? fallbackBadgeText;
+  const lineSignature = useMemo(() => resolvedLines.join("|"), [resolvedLines]);
+  const subtitleSignature = useMemo(() => resolvedSubtitle, [resolvedSubtitle]);
 
-  useEffect(() => {
-    if (!titleRef.current) {
-      return;
-    }
+    useEffect(() => {
+        if (!titleRef.current) {
+            return;
+        }
 
-    const ctx = gsap.context(() => {
-      const timeline = gsap.timeline({ delay });
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+        const isMobile =
+            typeof window !== "undefined" &&
+            window.matchMedia("(max-width: 768px)").matches;
+        const prefersReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        if (prefersReducedMotion || isMobile) {
+            return;
+        }
+
+        const ctx = gsap.context(() => {
+            const timeline = gsap.timeline({ delay });
       const titleDuration = 0.7;
       const titleStagger = 0.03;
-      const lineDurations = lines.map((line) =>
+      const lineDurations = resolvedLines.map((line) =>
         line.length > 0 ? titleDuration + (line.length - 1) * titleStagger : 0,
       );
       const lineStarts: number[] = lineDurations.map((_, index) => {
@@ -166,7 +180,7 @@ export default function HeroTitle({
           );
       }
 
-      lines.forEach((_, lineIndex) => {
+      resolvedLines.forEach((_, lineIndex) => {
         const chars = titleRef.current?.querySelectorAll(
           `[data-line="${lineIndex}"]`,
         );
@@ -217,7 +231,7 @@ export default function HeroTitle({
     }, titleRef);
 
     return () => ctx.revert();
-  }, [delay, lineSignature, lines, subtitleSignature]);
+  }, [delay, lineSignature, subtitleSignature, resolvedLines]);
 
   return (
     <div ref={titleRef} style={titleWrap}>
@@ -226,19 +240,19 @@ export default function HeroTitle({
           <div style={badgeExpanded} data-badge-expanded>
             <div style={badgeContent}>
               <span style={badgeChip} data-badge-chip>
-                {badgeLabel}
+                {badgeLabelText}
               </span>
 
               {/* Texto con máscara via clipPath (GSAP lo anima) */}
-              <span style={badgeLabelText} data-badge-text>
-                {badgeText}
+              <span style={badgeTextStyle} data-badge-text>
+                {badgeTextLabel}
               </span>
             </div>
           </div>
         </div>
 
-        <h1 style={titleText} aria-label={lines.join(" ")}>
-          {lines.map((line, lineIndex) => (
+        <h1 style={titleText} aria-label={resolvedLines.join(" ")}>
+          {resolvedLines.map((line, lineIndex) => (
             <span key={`${line}-${lineIndex}`} style={lineStyle} aria-hidden>
               {Array.from(line).map((char, charIndex) => (
                 <span
@@ -253,7 +267,7 @@ export default function HeroTitle({
           ))}
         </h1>
         <p style={subtitleText} data-subtitle>
-          {subtitle}
+          {resolvedSubtitle}
         </p>
         <div style={buttonswrap} data-hero-buttons>
           <RippleButton
@@ -263,7 +277,7 @@ export default function HeroTitle({
             tapScale={0.98}
             className={heroButtonClass}
           >
-            Get in touch
+            {copy.hero.buttons.primary}
             <PhoneCallIcon size={16} weight="bold" aria-hidden="true" />
             <RippleButtonRipples />
           </RippleButton>
@@ -274,7 +288,7 @@ export default function HeroTitle({
             tapScale={0.98}
             className={heroButtonClassSecondary}
           >
-            Services
+            {copy.hero.buttons.secondary}
             <RippleButtonRipples />
           </RippleButton>
         </div>
@@ -392,6 +406,12 @@ const badgeChip: CSSProperties = {
 };
 
 const badgeLabelText: CSSProperties = {
+  fontWeight: 500,
+  display: "inline-block", // para clipPath
+  whiteSpace: "nowrap",
+};
+
+const badgeTextStyle: CSSProperties = {
   fontWeight: 500,
   display: "inline-block", // para clipPath
   whiteSpace: "nowrap",
