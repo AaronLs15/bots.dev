@@ -50,20 +50,20 @@ export default function HeroNavbar({
                 </div>
                 <div style={navRight}>
                     <nav style={navLinks}>
-                        <a style={navLink} href="#mejora">
+                        <a style={navLink} href="/">
                             Home
                         </a>
-                        <a style={navLink} href="#process">
+                        <a style={navLink} href="/about">
                             About
                         </a>
-                        <a style={navLink} href="#automatizacion">
+                        <a style={navLink} href="/blog">
                             Blog
                         </a>
-                        <a style={navLink} href="#resultados">
+                        <a style={navLink} href="/contact">
                             Contact
                         </a>
                     </nav>
-                    <a style={ctaButton} href="#mejora">
+                    <a style={ctaButton} href="/contact">
                         Book a call
                     </a>
                 </div>
