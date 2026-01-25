@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SiteFooter from "@/components/sections/footer/site-footer";
+import { LanguageProvider } from "@/components/providers/language-provider";
 
 const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-sans'});
 
@@ -30,8 +31,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
       >
-        {children}
-        <SiteFooter />
+        <LanguageProvider>
+          {children}
+          <SiteFooter />
+        </LanguageProvider>
       </body>
     </html>
   );

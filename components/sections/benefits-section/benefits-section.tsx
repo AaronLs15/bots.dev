@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLanguage } from "@/components/providers/language-provider";
 import {
     Lightning,
     UsersThree,
@@ -12,46 +13,22 @@ import {
     ArrowsOutCardinal,
 } from "@phosphor-icons/react";
 
-const benefits = [
-    {
-        icon: Lightning,
-        title: "Increased Productivity",
-        description:
-            "Automate repetitive work so your team can focus on higher‑value decisions and execution.",
-    },
-    {
-        icon: UsersThree,
-        title: "Better Customer Experience",
-        description:
-            "Deliver faster responses and personalized interactions that improve satisfaction and retention.",
-    },
-    {
-        icon: Clock,
-        title: "24/7 Availability",
-        description:
-            "Always‑on systems handle requests around the clock without downtime or delays.",
-    },
-    {
-        icon: CurrencyDollar,
-        title: "Cost Reduction",
-        description:
-            "Reduce manual overhead and optimize resources with smarter, automated workflows.",
-    },
-    {
-        icon: ChartLineUp,
-        title: "Data‑Driven Insights",
-        description:
-            "Turn complex data into clear signals that guide strategy and improve accuracy.",
-    },
-    {
-        icon: ArrowsOutCardinal,
-        title: "Scalability & Growth",
-        description:
-            "Scale operations smoothly without increasing headcount or sacrificing quality.",
-    },
+const benefitIcons = [
+    Lightning,
+    UsersThree,
+    Clock,
+    CurrencyDollar,
+    ChartLineUp,
+    ArrowsOutCardinal,
 ];
 
 export default function BenefitsSection() {
+    const { copy } = useLanguage();
+    const benefitsCopy = copy.benefits;
+    const benefits = benefitsCopy.items.map((item, index) => ({
+        ...item,
+        icon: benefitIcons[index] ?? Lightning,
+    }));
     const sectionRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -121,18 +98,17 @@ export default function BenefitsSection() {
                     className="mx-auto flex max-w-3xl flex-col items-center text-center"
                 >
                     <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-sm text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                        Benefits
+                        {benefitsCopy.badge}
                     </span>
                     <h2
                         id="benefits-title"
                         className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl"
                         style={{ textWrap: "balance" }}
                     >
-                        The Key Benefits of Bots.dev for Your Business Growth
+                        {benefitsCopy.title}
                     </h2>
                     <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
-                        Discover how intelligent automation increases efficiency, reduces costs,
-                        and keeps your organization moving faster with smarter processes.
+                        {benefitsCopy.subtitle}
                     </p>
                 </div>
 

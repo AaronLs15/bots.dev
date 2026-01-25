@@ -2,6 +2,7 @@
 
 import { CSSProperties, useEffect, useRef } from "react"
 import gsap from "gsap"
+import { useLanguage } from "@/components/providers/language-provider"
 
 type HeroNavbarProps = {
     delay?: number
@@ -15,6 +16,8 @@ export default function HeroNavbar({
     logoAlt = "bots.dev logo",
 }: HeroNavbarProps) {
     const navRef = useRef<HTMLDivElement | null>(null)
+    const { language, toggleLanguage, copy } = useLanguage()
+    const isSpanish = language === "es"
 
     useEffect(() => {
         if (!navRef.current) {
@@ -50,22 +53,47 @@ export default function HeroNavbar({
                 </div>
                 <div style={navRight}>
                     <nav style={navLinks}>
-                        <a style={navLink} href="/">
-                            Home
+                        <a style={navLink} href="#mejora">
+                            {copy.navbar.links.services}
                         </a>
-                        <a style={navLink} href="/about">
-                            About
+                        <a style={navLink} href="#process">
+                            {copy.navbar.links.process}
                         </a>
-                        <a style={navLink} href="/blog">
-                            Blog
+                        <a style={navLink} href="#benefits">
+                            {copy.navbar.links.benefits}
                         </a>
-                        <a style={navLink} href="/contact">
-                            Contact
+                        <a style={navLink} href="#results">
+                            {copy.navbar.links.results}
                         </a>
                     </nav>
-                    <a style={ctaButton} href="/contact">
-                        Book a call
+                    
+                    <a style={ctaButton} href="#mejora">
+                        {copy.navbar.cta}
                     </a>
+                    <div style={langControl}>
+                        <button
+                            type="button"
+                            aria-label={isSpanish ? copy.navbar.toEnglish : copy.navbar.toSpanish}
+                            role="switch"
+                            aria-checked={isSpanish}
+                            onClick={toggleLanguage}
+                            style={langSwitch}
+                        >
+                            <span style={langTrack} />
+                            <span style={{ ...langOption, left: 10, color: isSpanish ? "rgba(220, 244, 255, 0.45)" : "rgba(220, 244, 255, 0.9)" }}>
+                                EN
+                            </span>
+                            <span style={{ ...langOption, right: 10, color: isSpanish ? "rgba(220, 244, 255, 0.9)" : "rgba(220, 244, 255, 0.45)" }}>
+                                ES
+                            </span>
+                            <span
+                                style={{
+                                    ...langThumb,
+                                    transform: isSpanish ? "translateX(42px)" : "translateX(0)",
+                                }}
+                            />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -129,7 +157,7 @@ const brandText: CSSProperties = {
 const navRight: CSSProperties = {
     display: "flex",
     alignItems: "center",
-    gap: 14,
+    gap: 12,
 }
 
 const navLinks: CSSProperties = {
@@ -143,6 +171,64 @@ const navLinks: CSSProperties = {
 const navLink: CSSProperties = {
     color: "rgba(220, 244, 255, 0.7)",
     textDecoration: "none",
+}
+
+const langControl: CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+}
+
+const langText: CSSProperties = {
+    fontSize: 11,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    color: "rgba(220, 244, 255, 0.6)",
+    fontWeight: 600,
+}
+
+const langSwitch: CSSProperties = {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 72,
+    height: 30,
+    borderRadius: 999,
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    background: "rgba(12, 18, 24, 0.55)",
+    boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.04)",
+    cursor: "pointer",
+    padding: 0,
+}
+
+const langTrack: CSSProperties = {
+    position: "absolute",
+    inset: 4,
+    borderRadius: 999,
+    background: "rgba(255, 255, 255, 0.06)",
+}
+
+const langOption: CSSProperties = {
+    position: "absolute",
+    fontSize: 10,
+    fontWeight: 600,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    zIndex: 1,
+    transition: "color 200ms ease",
+}
+
+const langThumb: CSSProperties = {
+    position: "absolute",
+    left: 4,
+    top: 4,
+    width: 22,
+    height: 22,
+    borderRadius: "50%",
+    background: "rgba(133, 207, 236, 0.9)",
+    transition: "transform 240ms ease",
+    boxShadow: "0 6px 14px rgba(0, 0, 0, 0.35)",
 }
 
 const ctaButton: CSSProperties = {

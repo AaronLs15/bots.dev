@@ -1,4 +1,7 @@
+"use client";
+
 import { CSSProperties } from "react";
+import { useLanguage } from "@/components/providers/language-provider";
 
 type SiteFooterProps = {
     logoSrc?: string;
@@ -9,6 +12,7 @@ export default function SiteFooter({
     logoSrc = "/botsdev-logo.svg",
     logoAlt = "bots.dev logo",
 }: SiteFooterProps) {
+    const { copy } = useLanguage();
     return (
         <footer style={footerWrap}>
             <div style={footerInner}>
@@ -19,31 +23,31 @@ export default function SiteFooter({
                     <div>
                         <div style={brandText}>bots.dev</div>
                         <p style={brandCaption}>
-                            Automated systems that keep your business moving faster.
+                            {copy.footer.caption}
                         </p>
                     </div>
                 </div>
 
                 <nav style={footerNav} aria-label="Footer navigation">
                     <a style={footerLink} href="#mejora">
-                        Services
+                        {copy.footer.links.services}
                     </a>
                     <a style={footerLink} href="#process">
-                        Process
+                        {copy.footer.links.process}
                     </a>
                     <a style={footerLink} href="#benefits">
-                        Benefits
+                        {copy.footer.links.benefits}
                     </a>
                 </nav>
 
                 <div style={footerMeta}>
-                    <span>© 2026 bots.dev. All rights reserved.</span>
+                    <span>(c) 2026 bots.dev. {copy.footer.rights}</span>
                     <div style={footerMetaLinks}>
                         <a style={footerLink} href="#">
-                            Privacy
+                            {copy.footer.links.privacy}
                         </a>
                         <a style={footerLink} href="#">
-                            Terms
+                            {copy.footer.links.terms}
                         </a>
                     </div>
                 </div>
