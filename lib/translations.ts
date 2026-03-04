@@ -125,7 +125,7 @@ export const translations = {
                 },
                 {
                     step: "Step 2",
-                    title: "AI Development",
+                    title: "Development",
                     description:
                         "We design automation systems and build reliable pipelines tailored to your operations.",
                 },
@@ -149,9 +149,17 @@ export const translations = {
                 "Manual work",
                 "Repetitive task",
             ],
+            codelines: {
+                class: "class",
+                function: " Automation",
+                def: "def run(self, payload):",
+                result: "result = model.predict(payload)",
+                return: "return format_result(result)",
+                status: "status: optimized"
+            },
             integrationNote: "Secure API connections with minimal disruption.",
-            devBadge: "AI Core",
             statusLabel: "status",
+            devBadge: "Core",
             statusValue: "optimized",
             demo: {
                 title: "Generate",
@@ -346,7 +354,7 @@ export const translations = {
                 },
                 {
                     step: "Paso 2",
-                    title: "Desarrollo de IA",
+                    title: "Desarrollo",
                     description:
                         "Disenamos sistemas de automatizacion y pipelines confiables para tu operacion.",
                 },
@@ -370,8 +378,16 @@ export const translations = {
                 "Trabajo manual",
                 "Tarea repetitiva",
             ],
+            codelines: {
+                class: "class",
+                function: " PipelineComercial",
+                def: "def ejecutar_orquestacion(self, cliente):",
+                result: "resultado = calificar_oportunidades(cliente)",
+                return: "return activar_flujo_de_conversion(resultado)",
+                status: "estado: optimizado",
+            },
             integrationNote: "Conexiones API seguras con minima interrupcion.",
-            devBadge: "Nucleo IA",
+            devBadge: "Nucleo",
             statusLabel: "estado",
             statusValue: "optimizado",
             demo: {

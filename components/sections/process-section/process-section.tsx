@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -12,46 +12,12 @@ const typingConfig = {
     indentPx: 12,
 };
 
-const stepDemos = ["analysis", "development", "integration", "optimization"] as const;
-
-const codeLines = [
-    {
-        indent: 0,
-        segments: [
-            { text: "class ", className: "text-white/40" },
-            { text: "Automation", className: "text-[#85cfec]" },
-            { text: ":", className: "text-white/40" },
-        ],
-    },
-    {
-        indent: 1,
-        segments: [{ text: "def run(self, payload):", className: "text-white/50" }],
-    },
-    {
-        indent: 2,
-        segments: [{ text: "result = model.predict(payload)", className: "text-white/70" }],
-    },
-    {
-        indent: 2,
-        segments: [{ text: "return format_result(result)", className: "text-white/70" }],
-    },
-];
-
-const typedLines = (() => {
-    let time = 0;
-    return codeLines.map((line) => {
-        const segments = line.segments.map((segment) => {
-            const chars = segment.text.split("").map((char) => {
-                const delay = time;
-                time += typingConfig.charDelay;
-                return { char, delay, className: segment.className };
-            });
-            return { chars };
-        });
-        time += typingConfig.linePause;
-        return { indent: line.indent, segments };
-    });
-})();
+const stepDemos = [
+    "analysis",
+    "development",
+    "integration",
+    "optimization",
+] as const;
 
 const ProcessSectionStyles = () => (
     <style>{`
@@ -98,14 +64,93 @@ const ProcessSectionStyles = () => (
 
 export default function ProcessSection() {
     const sectionRef = useRef<HTMLDivElement | null>(null);
-    const { copy } = useLanguage();
+    const { copy, language } = useLanguage();
     const processCopy = copy.process;
     const processSteps = processCopy.steps.map((step, index) => ({
         ...step,
         demo: stepDemos[index] ?? "analysis",
     }));
+    const CodeLinesTranslations = copy.process.codelines;
     const analysisChecks = processCopy.analysisChecks;
     const optimizationItems = processCopy.optimizationItems;
+
+    
+
+    const typedLines = useMemo(() => {
+        const codeLines = [
+            {
+                indent: 0,
+                segments: [
+                    {
+                        text: CodeLinesTranslations.class,
+                        className: "text-white/40",
+                    },
+                    {
+                        text: CodeLinesTranslations.function,
+                        className: "text-[#85cfec]",
+                    },
+                    {
+                        text: ":",
+                        className: "text-white/40",
+                    },
+                ],
+            },
+            {
+                indent: 1,
+                segments: [
+                    {
+                        text: CodeLinesTranslations.def,
+                        className: "text-white/50",
+                    },
+                ],
+            },
+            {
+                indent: 2,
+                segments: [
+                    {
+                        text: CodeLinesTranslations.result,
+                        className: "text-white/70",
+                    },
+                ],
+            },
+            {
+                indent: 2,
+                segments: [
+                    {
+                        text: CodeLinesTranslations.return,
+                        className: "text-white/70",
+                    },
+                ],
+            },
+            {
+                indent: 0,
+                segments: [
+                    {
+                        text: `${processCopy.statusLabel}: `,
+                        className: "text-white/40",
+                    },
+                    {
+                        text: processCopy.statusValue,
+                        className: "text-white/70",
+                    },
+                ],
+            },
+        ];
+
+        let time = 0;
+        return codeLines.map((line) => {
+            const segments = line.segments.map((segment) => {
+                const chars = segment.text.split("").map((char) => {
+                    const delay = time;
+                    time += typingConfig.charDelay;
+                    return { char, delay, className: segment.className };
+                });
+                return { chars };
+            });
+            time += typingConfig.linePause;
+            return { indent: line.indent, segments };
+        });
+    }, [CodeLinesTranslations, processCopy.statusLabel, processCopy.statusValue]);
 
     useEffect(() => {
         if (!sectionRef.current) return;
@@ -119,7 +164,9 @@ export default function ProcessSection() {
         gsap.registerPlugin(ScrollTrigger);
 
         const ctx = gsap.context(() => {
-            const blocks = gsap.utils.toArray<HTMLElement>("[data-animate='block']");
+            const blocks = gsap.utils.toArray<HTMLElement>(
+                "[data-animate='block']",
+            );
             blocks.forEach((block) => {
                 gsap.fromTo(
                     block,
@@ -138,7 +185,9 @@ export default function ProcessSection() {
                 );
             });
 
-            const items = gsap.utils.toArray<HTMLElement>("[data-animate='item']");
+            const items = gsap.utils.toArray<HTMLElement>(
+                "[data-animate='item']",
+            );
             items.forEach((item) => {
                 gsap.fromTo(
                     item,
@@ -157,19 +206,25 @@ export default function ProcessSection() {
                 );
             });
 
-            const codeBlocks = gsap.utils.toArray<HTMLElement>("[data-code-block]");
+            const codeBlocks =
+                gsap.utils.toArray<HTMLElement>("[data-code-block]");
             codeBlocks.forEach((block) => {
-                ScrollTrigger.create({
+                block.classList.remove("is-active");
+
+                const trigger = ScrollTrigger.create({
                     trigger: block,
                     start: "top 85%",
                     onEnter: () => block.classList.add("is-active"),
+                    onEnterBack: () => block.classList.add("is-active"),
                     onLeaveBack: () => block.classList.remove("is-active"),
                 });
+
+                block.classList.toggle("is-active", trigger.isActive);
             });
         }, sectionRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [language]);
 
     return (
         <section
@@ -201,9 +256,9 @@ export default function ProcessSection() {
                 <div className="grid gap-6 md:grid-cols-2">
                     {processSteps.map((step) => (
                         <article
-                            key={step.step}
+                            key={step.demo}
                             data-animate="block"
-                            className="flex min-h-[360px] flex-col rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                            className="flex min-h-90 min-w-0 flex-col rounded-[26px] border border-white/10 bg-white/4 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
                         >
                             <span className="inline-flex w-fit items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
                                 {step.step}
@@ -217,10 +272,10 @@ export default function ProcessSection() {
                             <p className="mt-3 text-sm leading-relaxed text-white/70 md:text-base">
                                 {step.description}
                             </p>
-                            <div className="mt-6 flex-1 rounded-2xl border border-white/10 bg-black/40 p-4">
+                            <div className="mt-6 min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/40 p-4">
                                 {step.demo === "analysis" ? (
                                     <div className="grid items-center gap-4 md:grid-cols-[0.9fr_1.1fr]">
-                                        <div className="relative mx-auto flex aspect-square w-full max-w-[160px] items-center justify-center rounded-full border border-white/10 bg-black/50">
+                                        <div className="relative mx-auto flex aspect-square w-full max-w-40 items-center justify-center rounded-full border border-white/10 bg-black/50">
                                             <span
                                                 aria-hidden="true"
                                                 className="absolute inset-0 rounded-full opacity-70 animate-spin motion-reduce:animate-none"
@@ -255,43 +310,56 @@ export default function ProcessSection() {
                                             </span>
                                         </div>
                                         <div
+                                            key={`code-block-${language}`}
                                             data-code-block
-                                            className="code-block rounded-xl border border-white/10 bg-black/60 p-4 font-mono text-[11px] leading-relaxed text-white/70"
+                                            className="code-block w-full max-w-full overflow-x-auto overscroll-x-contain rounded-xl border border-white/10 bg-black/60 p-3 font-mono text-[10px] leading-relaxed text-white/70 sm:p-4 sm:text-[11px]"
                                         >
-                                            {typedLines.map((line, lineIndex) => (
-                                                <div
-                                                    key={`line-${lineIndex}`}
-                                                    className="code-line whitespace-pre"
-                                                    style={{
-                                                        paddingLeft: line.indent * typingConfig.indentPx,
-                                                    }}
-                                                >
-                                                    {line.segments.map((segment, segmentIndex) =>
-                                                        segment.chars.map((char, charIndex) => (
+                                            {typedLines.map(
+                                                (line, lineIndex) => (
+                                                    <div
+                                                        key={`line-${lineIndex}`}
+                                                        className="code-line whitespace-pre"
+                                                        style={{
+                                                            paddingLeft:
+                                                                line.indent *
+                                                                typingConfig.indentPx,
+                                                        }}
+                                                    >
+                                                        {line.segments.map(
+                                                            (
+                                                                segment,
+                                                                segmentIndex,
+                                                            ) =>
+                                                                segment.chars.map(
+                                                                    (
+                                                                        char,
+                                                                        charIndex,
+                                                                    ) => (
+                                                                        <span
+                                                                            key={`char-${lineIndex}-${segmentIndex}-${charIndex}`}
+                                                                            className={`code-char ${char.className}`}
+                                                                            style={{
+                                                                                ["--char-delay" as string]: `${char.delay}s`,
+                                                                                ["--char-duration" as string]: `${typingConfig.charDuration}s`,
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                char.char
+                                                                            }
+                                                                        </span>
+                                                                    ),
+                                                                ),
+                                                        )}
+                                                        {lineIndex ===
+                                                        typedLines.length - 1 ? (
                                                             <span
-                                                                key={`char-${lineIndex}-${segmentIndex}-${charIndex}`}
-                                                                className={`code-char ${char.className}`}
-                                                                style={{
-                                                                    ["--char-delay" as string]: `${char.delay}s`,
-                                                                    ["--char-duration" as string]: `${typingConfig.charDuration}s`,
-                                                                }}
-                                                            >
-                                                                {char.char}
-                                                            </span>
-                                                        )),
-                                                    )}
-                                                </div>
-                                            ))}
-                                            <div className="mt-2 text-white/40">
-                                                {processCopy.statusLabel}:{" "}
-                                                <span className="text-white/70">
-                                                    {processCopy.statusValue}
-                                                </span>
-                                                <span
-                                                    aria-hidden="true"
-                                                    className="code-caret ml-1 inline-block h-[14px] w-[2px] translate-y-[2px] rounded-full bg-[#85cfec]/70"
-                                                />
-                                            </div>
+                                                                aria-hidden="true"
+                                                                className="code-caret ml-1 inline-block h-[14px] w-[2px] translate-y-[2px] rounded-full bg-[#85cfec]/70"
+                                                            />
+                                                        ) : null}
+                                                    </div>
+                                                ),
+                                            )}
                                         </div>
                                     </div>
                                 ) : null}
@@ -305,7 +373,10 @@ export default function ProcessSection() {
                                                 <span
                                                     aria-hidden="true"
                                                     className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#85cfec] shadow-[0_0_12px_rgba(133,207,236,0.7)] animate-pulse motion-reduce:animate-none"
-                                                    style={{ animationDuration: "2.2s" }}
+                                                    style={{
+                                                        animationDuration:
+                                                            "2.2s",
+                                                    }}
                                                 />
                                             </div>
                                             <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-sm font-semibold text-white/80">
@@ -319,40 +390,47 @@ export default function ProcessSection() {
                                 ) : null}
                                 {step.demo === "optimization" ? (
                                     <div className="flex h-full flex-col gap-3">
-                                        {optimizationItems.map((item, index) => (
-                                            <div
-                                                key={item.label}
-                                                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white/80"
-                                            >
-                                                <div>
-                                                    <p className="text-sm text-white/85">{item.label}</p>
-                                                    <p className="text-xs text-white/50">
-                                                        {item.detail}
-                                                    </p>
-                                                </div>
-                                                <span
-                                                    aria-hidden="true"
-                                                    className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 ${
-                                                        index === 0
-                                                            ? "text-[#85cfec]"
-                                                            : "text-white/60"
-                                                    }`}
+                                        {optimizationItems.map(
+                                            (item, index) => (
+                                                <div
+                                                    key={item.label}
+                                                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white/80"
                                                 >
+                                                    <div>
+                                                        <p className="text-sm text-white/85">
+                                                            {item.label}
+                                                        </p>
+                                                        <p className="text-xs text-white/50">
+                                                            {item.detail}
+                                                        </p>
+                                                    </div>
                                                     <span
-                                                        className={`h-3 w-3 rounded-full border-2 ${
+                                                        aria-hidden="true"
+                                                        className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 ${
                                                             index === 0
-                                                                ? "border-[#85cfec] border-t-transparent animate-spin motion-reduce:animate-none"
-                                                                : "border-white/30"
+                                                                ? "text-[#85cfec]"
+                                                                : "text-white/60"
                                                         }`}
-                                                        style={
-                                                            index === 0
-                                                                ? { animationDuration: "2.2s" }
-                                                                : undefined
-                                                        }
-                                                    />
-                                                </span>
-                                            </div>
-                                        ))}
+                                                    >
+                                                        <span
+                                                            className={`h-3 w-3 rounded-full border-2 ${
+                                                                index === 0
+                                                                    ? "border-[#85cfec] border-t-transparent animate-spin motion-reduce:animate-none"
+                                                                    : "border-white/30"
+                                                            }`}
+                                                            style={
+                                                                index === 0
+                                                                    ? {
+                                                                          animationDuration:
+                                                                              "2.2s",
+                                                                      }
+                                                                    : undefined
+                                                            }
+                                                        />
+                                                    </span>
+                                                </div>
+                                            ),
+                                        )}
                                     </div>
                                 ) : null}
                             </div>
