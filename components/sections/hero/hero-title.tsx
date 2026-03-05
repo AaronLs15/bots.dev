@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, useEffect, useMemo, useRef } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { PhoneCallIcon } from "@phosphor-icons/react";
 import {
@@ -27,6 +27,7 @@ export default function HeroTitle({
   delay = 1,
 }: HeroTitleProps) {
   const titleRef = useRef<HTMLDivElement | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const { copy } = useLanguage();
   const resolvedLines = lines ?? copy.hero.titleLines ?? fallbackLines;
   const resolvedSubtitle = subtitle ?? copy.hero.subtitle ?? fallbackSubtitle;
@@ -35,24 +36,39 @@ export default function HeroTitle({
   const lineSignature = useMemo(() => resolvedLines.join("|"), [resolvedLines]);
   const subtitleSignature = useMemo(() => resolvedSubtitle, [resolvedSubtitle]);
 
-    useEffect(() => {
-        if (!titleRef.current) {
-            return;
-        }
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
 
-        const isMobile =
-            typeof window !== "undefined" &&
-            window.matchMedia("(max-width: 768px)").matches;
-        const prefersReducedMotion = window.matchMedia(
-            "(prefers-reduced-motion: reduce)",
-        ).matches;
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const updateMatch = () => setIsMobile(mediaQuery.matches);
+    updateMatch();
 
-        if (prefersReducedMotion || isMobile) {
-            return;
-        }
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", updateMatch);
+      return () => mediaQuery.removeEventListener("change", updateMatch);
+    }
 
-        const ctx = gsap.context(() => {
-            const timeline = gsap.timeline({ delay });
+    mediaQuery.addListener(updateMatch);
+    return () => mediaQuery.removeListener(updateMatch);
+  }, []);
+
+  useEffect(() => {
+    if (!titleRef.current) {
+      return;
+    }
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion || isMobile) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const timeline = gsap.timeline({ delay });
       const titleDuration = 0.7;
       const titleStagger = 0.03;
       const lineDurations = resolvedLines.map((line) =>
@@ -82,8 +98,6 @@ export default function HeroTitle({
         titleRef.current?.querySelector("[data-subtitle]") ?? null;
       const buttonsNode =
         titleRef.current?.querySelector("[data-hero-buttons]") ?? null;
-      const badgeCompactNode =
-        titleRef.current?.querySelector("[data-badge-compact]") ?? null;
       const badgeExpandedNode =
         titleRef.current?.querySelector("[data-badge-expanded]") ?? null;
       const badgeChipNode =
@@ -231,29 +245,66 @@ export default function HeroTitle({
     }, titleRef);
 
     return () => ctx.revert();
-  }, [delay, lineSignature, subtitleSignature, resolvedLines]);
+  }, [delay, isMobile, lineSignature, subtitleSignature, resolvedLines]);
+
+  const titleStackStyle = isMobile
+    ? { ...titleStack, width: "100%", padding: "0 6vw" }
+    : titleStack;
+
+  const titleTextStyle = isMobile
+    ? {
+        ...titleText,
+        fontSize: "clamp(14px, 5vw, 20px)",
+        letterSpacing: "0.02em",
+      }
+    : titleText;
+
+  const lineTextStyle = lineStyle;
+
+  const subtitleTextStyle = isMobile
+    ? { ...subtitleText, maxWidth: "100%" }
+    : subtitleText;
+
+  const badgeWrapStyle = isMobile ? { ...badgeWrap, width: "100%" } : badgeWrap;
+  const badgeExpandedStyle = isMobile
+    ? { ...badgeExpanded, maxWidth: "100%", padding: "5px 10px" }
+    : badgeExpanded;
+  const badgeContentStyle: CSSProperties = isMobile
+    ? {
+        ...badgeContent,
+        justifyContent: "center" as const,
+        flexWrap: "wrap" as const,
+        whiteSpace: "normal" as const,
+        columnGap: 10,
+        rowGap: 4,
+        textAlign: "center" as const,
+      }
+    : badgeContent;
+  const badgeTextResponsiveStyle = isMobile
+    ? { ...badgeTextStyle, whiteSpace: "normal" }
+    : badgeTextStyle;
 
   return (
     <div ref={titleRef} style={titleWrap}>
-      <div style={titleStack}>
-        <div style={badgeWrap}>
-          <div style={badgeExpanded} data-badge-expanded>
-            <div style={badgeContent}>
+      <div style={titleStackStyle}>
+        <div style={badgeWrapStyle}>
+          <div style={badgeExpandedStyle} data-badge-expanded>
+            <div style={badgeContentStyle}>
               <span style={badgeChip} data-badge-chip>
                 {badgeLabelText}
               </span>
 
               {/* Texto con máscara via clipPath (GSAP lo anima) */}
-              <span style={badgeTextStyle} data-badge-text>
+              <span style={badgeTextResponsiveStyle} data-badge-text>
                 {badgeTextLabel}
               </span>
             </div>
           </div>
         </div>
 
-        <h1 style={titleText} aria-label={resolvedLines.join(" ")}>
+        <h1 style={titleTextStyle} aria-label={resolvedLines.join(" ")}>
           {resolvedLines.map((line, lineIndex) => (
-            <span key={`${line}-${lineIndex}`} style={lineStyle} aria-hidden>
+            <span key={`${line}-${lineIndex}`} style={lineTextStyle} aria-hidden>
               {Array.from(line).map((char, charIndex) => (
                 <span
                   key={`${lineIndex}-${charIndex}`}
@@ -266,7 +317,7 @@ export default function HeroTitle({
             </span>
           ))}
         </h1>
-        <p style={subtitleText} data-subtitle>
+        <p style={subtitleTextStyle} data-subtitle>
           {resolvedSubtitle}
         </p>
         <div style={buttonswrap} data-hero-buttons>
@@ -388,7 +439,8 @@ const badgeExpanded: CSSProperties = {
 const badgeContent: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
-  gap: 10,
+  columnGap: 10,
+  rowGap: 0,
   whiteSpace: "nowrap",
   fontSize: 12,
   color: "rgba(220, 244, 255, 0.9)",
@@ -403,12 +455,6 @@ const badgeChip: CSSProperties = {
   fontWeight: 600,
   fontSize: 11,
   boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.2)",
-};
-
-const badgeLabelText: CSSProperties = {
-  fontWeight: 500,
-  display: "inline-block", // para clipPath
-  whiteSpace: "nowrap",
 };
 
 const badgeTextStyle: CSSProperties = {

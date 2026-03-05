@@ -118,9 +118,9 @@ export default function HeroNavbar({
                                     ...langThumb,
                                     transform: isSpanish
                                         ? isMobile
-                                            ? "translateX(38px)"
-                                            : "translateX(42px)"
-                                        : "translateX(0)",
+                                            ? "translate3d(38px, -50%, 0)"
+                                            : "translate3d(42px, -50%, 0)"
+                                        : "translate3d(0, -50%, 0)",
                                 }}
                             />
                         </button>
@@ -272,6 +272,7 @@ const langSwitch: CSSProperties = {
     boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.04)",
     cursor: "pointer",
     padding: 0,
+    overflow: "hidden",
 }
 
 const langSwitchMobile: CSSProperties = {
@@ -299,7 +300,7 @@ const langOption: CSSProperties = {
 const langThumb: CSSProperties = {
     position: "absolute",
     left: 4,
-    top: 4,
+    top: "50%",
     width: 22,
     height: 22,
     borderRadius: "50%",
