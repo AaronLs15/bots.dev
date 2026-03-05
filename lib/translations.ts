@@ -262,7 +262,7 @@ export const translations = {
                 badge: "Asistente IA",
                 title: "Delegar tareas diarias",
                 paragraphs: [
-                    "Lleva calendarios, reportes y aprobaciones rutinarias a flujos de IA que eliminan cuellos de botella.",
+                    "Lleva calendarios, reportes y aprobaciones rutinarias a flujos que eliminan cuellos de botella.",
                     "Manten operaciones consistentes mientras tu equipo se enfoca en decisiones de mayor impacto.",
                 ],
                 tags: ["ERP", "CRM", "POS"],
@@ -350,7 +350,7 @@ export const translations = {
                     step: "Paso 1",
                     title: "Analisis inteligente",
                     description:
-                        "Evaluamos tus flujos, mapeamos dependencias y detectamos oportunidades de IA.",
+                        "Evaluamos tus flujos, mapeamos dependencias y detectamos oportunidades de mejora.",
                 },
                 {
                     step: "Paso 2",
