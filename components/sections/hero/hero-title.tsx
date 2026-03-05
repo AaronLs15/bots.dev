@@ -269,15 +269,15 @@ export default function HeroTitle({
   const badgeExpandedStyle = isMobile
     ? { ...badgeExpanded, maxWidth: "100%", padding: "5px 10px" }
     : badgeExpanded;
-  const badgeContentStyle = isMobile
+  const badgeContentStyle: CSSProperties = isMobile
     ? {
         ...badgeContent,
-        justifyContent: "center",
-        flexWrap: "wrap",
-        whiteSpace: "normal",
+        justifyContent: "center" as const,
+        flexWrap: "wrap" as const,
+        whiteSpace: "normal" as const,
         columnGap: 10,
         rowGap: 4,
-        textAlign: "center",
+        textAlign: "center" as const,
       }
     : badgeContent;
   const badgeTextResponsiveStyle = isMobile
